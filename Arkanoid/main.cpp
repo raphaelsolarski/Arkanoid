@@ -1,23 +1,22 @@
 #include <iostream>
 #include <SFML\Graphics.hpp>
+#include "gameState.h"
+#include "game.h"
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(640, 480, 32), "Arkanoid");
+	GameState::init(new Game(), &window);
 
-	while (window.isOpen())
+	while (GameState::getStateID() != GAME_STATE_EXIT)
 	{
 		//EVENTS
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
+		GameState::getCurrentState().handleEvents();
 		//LOGIC
+		GameState::getCurrentState().logic();
+		GameState::changeState();
 		//RENDER
-		window.display();
-		window.clear();
+		GameState::getCurrentState().render();
 	}
 	return 0;
 }
