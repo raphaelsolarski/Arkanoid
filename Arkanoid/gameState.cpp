@@ -54,3 +54,9 @@ GameState& GameState::getCurrentState()
 {
 	return *currentState;
 }
+
+void GameState::freeResources()
+{
+	if (currentState != nullptr)
+		delete currentState;
+}

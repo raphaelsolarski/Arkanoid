@@ -15,6 +15,7 @@ enum GameStates
 class GameState
 {
 public:
+	static void freeResources();
 	static void changeState();
 	static void setNextState(GameStates newState);
 	static void init(GameState* initialState, sf::RenderWindow *window);
