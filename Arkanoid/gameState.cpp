@@ -1,0 +1,56 @@
+#include "gameState.h"
+// Tutaj nale¿y dodaæ include'y wszystkich wykorzystywanych state'ów w grze
+#include "game.h"
+
+//pocz¹tkowe ustawienie zmiennych statycznych
+GameStates GameState::stateID = GAME_STATE_NULL;
+GameStates GameState::nextState = GAME_STATE_NULL;
+GameState* GameState::currentState = nullptr;
+sf::RenderWindow* GameState::window = nullptr;
+
+void GameState::changeState()
+{
+	if (nextState != GAME_STATE_NULL)
+	{
+		if (nextState != GAME_STATE_EXIT)
+		{
+			delete currentState;
+		}
+		switch (nextState)
+		{
+			//tutaj nale¿y zaimplementowaæ usuniêcie ka¿dego dodanego state'a
+		case GAME_STATE_GAME:
+			currentState = new Game();
+			break;
+		}
+		stateID = nextState;
+		nextState = GAME_STATE_NULL;
+	}
+}
+
+void GameState::setNextState(GameStates newState)
+{
+	if (nextState != GAME_STATE_EXIT)
+	{
+		nextState = newState;
+	}
+}
+
+GameStates GameState::getStateID()
+{
+	return stateID;
+}
+
+//funkcja inicjalizuj¹ca(jako parametr podaje siê wskaŸnik do pocz¹tkowego state'a
+//GameState::init(new Game())
+void GameState::init(GameState* initialState, sf::RenderWindow* newWindow)
+{
+	window = newWindow;
+	currentState = initialState;
+}
+
+//getter do currentState potrzebny, aby by³o mo¿na manipulowaæ na 
+GameState& GameState::getCurrentState()
+{
+	return *currentState;
+}
