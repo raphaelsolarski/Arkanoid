@@ -16,9 +16,11 @@ public:
 	void handleEvents();
 	void logic();
 	void render();
+
 private:
+	sf::Vector2i paddleSize;	//wielkoœæ paletki
 	sf::Vector2f ballPosition;	//pozycja pi³ki
-	sf::Vector2f racketPosition;//pozycja paletki
-	std::vector<sf::Sprite> spritesVector;	//wektor zawieraj¹cy wszystkie sprite'y
-	sf::Texture tilesTexture;	//tekstura wszystkich bloczków
+	std::vector<Block> blocksVector;	//wektor zawieraj¹cy wszystkie blocki
+	sf::Texture tilesTexture;	//tekstura bloczków planszy
+	sf::Texture paddleTexture;	//tekstura bloczka rakiety
 };

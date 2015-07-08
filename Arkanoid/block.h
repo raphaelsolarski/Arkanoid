@@ -12,6 +12,7 @@ enum BlockType
 class Block : public sf::Sprite
 {
 public:
+	Block();
 	Block(sf::Vector2f position, BlockType blockType);	//konstruktor
 	BlockType getBlockType();	//getter do pola blockType
 private:

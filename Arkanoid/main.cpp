@@ -12,6 +12,7 @@ int main()
 	GameState::init(new Game(), &window);
 
 	//bloczek testowy
+	std::cout << window.getSize().x << std::endl;
 
 	while (GameState::getStateID() != GAME_STATE_EXIT)
 	{
@@ -34,6 +35,6 @@ int main()
 	}
 
 	GameState::freeResources();
-	system("pause");
+	//system("pause");
 	return 0;
 }

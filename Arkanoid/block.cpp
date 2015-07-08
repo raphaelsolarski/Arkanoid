@@ -1,6 +1,11 @@
 #include "block.h"
 
-//konstruktor
+//konstruktory
+Block::Block()
+{
+
+}
+
 Block::Block(sf::Vector2f position, BlockType blockType)
 {
 	sf::Sprite::setPosition(position);
