@@ -55,6 +55,7 @@ GameState& GameState::getCurrentState()
 	return *currentState;
 }
 
+//sprz¹tanie po ostatnim state'cie
 void GameState::freeResources()
 {
 	if (currentState != nullptr)

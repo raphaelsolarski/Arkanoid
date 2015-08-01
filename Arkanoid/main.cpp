@@ -4,16 +4,21 @@
 #include "game.h"
 #include <cstdlib>
 
+//docelowa liczba klatek na sekundê
 const int FRAMES_PER_SECOND = 60;
 
 int main()
 { 
-	sf::RenderWindow window(sf::VideoMode(640, 480, 32), "Arkanoid");
+	//stworzenie okna sfml
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32), "Arkanoid");
+
+	//inicjalizacja state machine
 	GameState::init(new Game(), &window);
 
 	//bloczek testowy
 	std::cout << window.getSize().x << std::endl;
 
+	//Main Loop
 	while (GameState::getStateID() != GAME_STATE_EXIT)
 	{
 		sf::Clock clock;
@@ -28,13 +33,12 @@ int main()
 		//RENDER
 		GameState::getCurrentState().render();
 		
+		//Stabilizacja fps'ów
 		if (clock.getElapsedTime().asMilliseconds() < 1000 / FRAMES_PER_SECOND) 
 		{ 
 			sf::sleep(sf::milliseconds((1000 / FRAMES_PER_SECOND) - clock.getElapsedTime().asMilliseconds())); 
 		}
 	}
-
 	GameState::freeResources();
-	//system("pause");
 	return 0;
 }
