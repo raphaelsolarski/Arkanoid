@@ -22,10 +22,12 @@ sf::Vector2i Ball::getBallSize()
 void Ball::update()
 {
 	//jeœli pi³eczka dotyka ramki to ma siê odbiæ
-	if (getPosition().x < 32 || getPosition().x >= 576)
-		directionVector.x = directionVector.x * -1;
-	if (getPosition().y < 32)
-		directionVector.y = directionVector.y * -1;
+	if (getPosition().x < 32)
+		directionVector.x = 1;
+	else if (getPosition().x >= 576)
+		directionVector.x = -1;
+	else if (getPosition().y < 32)
+		directionVector.y = 1;
 
 	move(sf::Vector2f(directionVector.x*ballSpeed, directionVector.y*ballSpeed));
 }
