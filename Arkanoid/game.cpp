@@ -136,6 +136,9 @@ void Game::logic()
 		if (ball->bounce(*it))
 			break;
 	}
+	//sprawdzenie czy pi³ka nie wypad³a z planszy
+	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
+		setNextState(GAME_STATE_EXIT);
 
 	//przemieszczenie pi³ki
 	ball->update();
