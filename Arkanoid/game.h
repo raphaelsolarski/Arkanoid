@@ -6,6 +6,10 @@
 #include "SFML\Graphics.hpp"
 #include <vector>
 
+//na sztywno ustawione rozmiary okna
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+
 class Game : public GameState
 {
 public:
@@ -19,8 +23,9 @@ public:
 
 private:
 	sf::Vector2i paddleSize;	//wielkoœæ paletki
-	sf::Vector2f ballPosition;	//pozycja pi³ki
-	std::vector<Block> blocksVector;	//wektor zawieraj¹cy wszystkie blocki
+	Ball * ball;		//Pi³eczka
+	std::vector<Block> blocksVector;	//wektor zawieraj¹cy blocki znajduj¹ce siê wewn¹trz otoczki
+	std::vector<Block> borderVector;	//wektor zabieraj¹cy bloczki sk³adaj¹ce siê na otoczkê
 	sf::Texture tilesTexture;	//tekstura bloczków planszy
 	sf::Texture paddleTexture;	//tekstura bloczka rakiety
 };

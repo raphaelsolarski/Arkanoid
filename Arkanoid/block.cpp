@@ -1,14 +1,14 @@
 #include "block.h"
 
 //konstruktory
-Block::Block()
+Block::Block(sf::Vector2i blockSize)
 {
-
+	this->blockSize = blockSize;
 }
 
-Block::Block(sf::Vector2f position, BlockType blockType)
+//setter do pola blockType
+void Block::setBlockType(BlockType blockType)
 {
-	sf::Sprite::setPosition(position);
 	this->blockType = blockType;
 }
 
@@ -16,4 +16,10 @@ Block::Block(sf::Vector2f position, BlockType blockType)
 BlockType Block::getBlockType()
 {
 	return blockType;
+}
+
+//getter do pola blockSize
+sf::Vector2i Block::getBlockSize()
+{
+	return blockSize;
 }
