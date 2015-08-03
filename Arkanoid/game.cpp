@@ -89,6 +89,7 @@ Game::Game()
 				}
 				else
 				{
+					newBlock.setBlockType(BLOCK_TYPE_BREAKABLE);
 					newBlock.setPosition(sf::Vector2f(static_cast<float>(j * TILE_SIZE_X), static_cast<float>(i * TILE_SIZE_Y)));
 					newBlock.setTexture(tilesTexture);
 					newBlock.setTextureRect(sf::IntRect(map[i][j].x * TILE_SIZE_X, map[i][j].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
@@ -134,7 +135,15 @@ void Game::logic()
 	for (std::vector<Block>::iterator it = blocksVector.begin(); it != blocksVector.end(); it++)
 	{
 		if (ball->bounce(*it))
+		{	
+			//jeœli trafiony bloczek jest zniszczalny to nale¿y go zniszczyæ
+			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
+			{
+				blocksVector.erase(it);
+			}
+
 			break;
+		}
 	}
 	//sprawdzenie czy pi³ka nie wypad³a z planszy
 	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
