@@ -15,6 +15,7 @@ const int TILE_SIZE_Y = 32;
 
 Game::Game()
 {
+	//ustawienie na sztywno wymiarów paletki
 	paddleSize = sf::Vector2i(128, 32);
 
 	//Stworzenie pi³eczki
@@ -26,12 +27,12 @@ Game::Game()
 		std::cout << "paddle.png loading failed" << std::endl;
 	
 	//stworzenie bloczka paletki
-	Block paddleBlock(paddleSize);
-	paddleBlock.setTexture(paddleTexture);
-	paddleBlock.setPosition(startPaddlePosition);
+	paddle = new Block(paddleSize);
+	paddle->setTexture(paddleTexture);
+	paddle->setPosition(startPaddlePosition);
 
-	//wrzucenie blocka paletki do vektora bloczków - bloczek paletki zawsze bêdzie na blocksVector[0]
-	blocksVector.push_back(paddleBlock);
+	//wyzerowanie licznika bloczków do zniszczenia
+	blocksToWin = 0;
 
 	//WCZYTYWANIE MAPY
 	if (!tilesTexture.loadFromFile("tiles32.png"))
@@ -88,7 +89,8 @@ Game::Game()
 					borderVector.push_back(newBlock);
 				}
 				else
-				{
+				{	//mamy do czynienia ze zniszczalnym bloczkiem 
+					blocksToWin++;
 					newBlock.setBlockType(BLOCK_TYPE_BREAKABLE);
 					newBlock.setPosition(sf::Vector2f(static_cast<float>(j * TILE_SIZE_X), static_cast<float>(i * TILE_SIZE_Y)));
 					newBlock.setTexture(tilesTexture);
@@ -122,16 +124,28 @@ void Game::logic()
 		setNextState(GAME_STATE_EXIT);
 	}
 
+	//sprawdzenie czy pi³ka nie wypad³a z planszy
+	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
+		setNextState(GAME_STATE_EXIT);
+
+	//sprawdzam czy nie zniszczono wszystkich bloczków
+	if (blocksToWin <= 0)
+		setNextState(GAME_STATE_EXIT);
+
 	//live input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		if (blocksVector[0].getPosition().x > TILE_SIZE_X)
-			blocksVector[0].move(sf::Vector2f(-paddleSpeed, 0));
+		if (paddle->getPosition().x > TILE_SIZE_X)
+			paddle->move(sf::Vector2f(-paddleSpeed, 0));
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		if(blocksVector[0].getPosition().x < window->getSize().x - paddleSize.x- TILE_SIZE_X)
-			blocksVector[0].move(sf::Vector2f(paddleSpeed, 0));
+		if (paddle->getPosition().x < window->getSize().x - paddleSize.x- TILE_SIZE_X)
+			paddle->move(sf::Vector2f(paddleSpeed, 0));
 	
 	//obs³u¿enie kolizji
+	//kolizja z paletk¹
+	ball->bounce(*paddle);
+
+	//kolizje z bloczkami
 	for (std::vector<Block>::iterator it = blocksVector.begin(); it != blocksVector.end(); it++)
 	{
 		if (ball->bounce(*it))
@@ -140,14 +154,11 @@ void Game::logic()
 			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
 			{
 				blocksVector.erase(it);
+				blocksToWin--;
 			}
-
 			break;
 		}
 	}
-	//sprawdzenie czy pi³ka nie wypad³a z planszy
-	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
-		setNextState(GAME_STATE_EXIT);
 
 	//przemieszczenie pi³ki
 	ball->update();
@@ -167,7 +178,12 @@ void Game::render()
 		window->draw(blocksVector[i]);
 	}
 
+	//rysuje bi³kê
 	window->draw(*ball);
+
+	//rysuje paletkê
+	window->draw(*paddle);
+
 	window->display();
 	window->clear();
 }
