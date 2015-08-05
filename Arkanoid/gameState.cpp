@@ -1,8 +1,11 @@
 #include "gameState.h"
+
 // Tutaj nale¿y dodaæ include'y wszystkich wykorzystywanych state'ów w grze
 #include "game.h"
+#include "mainMenu.h"
 
 //pocz¹tkowe ustawienie zmiennych statycznych
+int GameState::nextLevel = 0; //nastêpny level jest domyœlnie ustawiony na level zerowy
 GameStates GameState::stateID = GAME_STATE_NULL;
 GameStates GameState::nextState = GAME_STATE_NULL;
 GameState* GameState::currentState = nullptr;
@@ -18,9 +21,9 @@ void GameState::changeState()
 		}
 		switch (nextState)
 		{
-			//tutaj nale¿y zaimplementowaæ usuniêcie ka¿dego dodanego state'a
+			//tutaj nale¿y zaimplementowaæ stworzenie ka¿dego dodanego state'a
 		case GAME_STATE_GAME:
-			currentState = new Game();
+			currentState = new Game(nextLevel);
 			break;
 		}
 		stateID = nextState;

@@ -6,21 +6,16 @@
 #include "SFML\Graphics.hpp"
 #include <vector>
 
-//na sztywno ustawione rozmiary okna
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
 class Game : public GameState
 {
 public:
-	Game();	//konstruktor - tutaj znajduje siê modu³ wczytuj¹cy mapê
+	Game(int level); //konstruktor - tutaj znajduje siê modu³ wczytuj¹cy mapê dla wskazanego levela
 	~Game();	//destruktor
 	//metody wirtualne dziedziczone od GameState
 	//czyli MainLoop
 	void handleEvents();
 	void logic();
 	void render();
-
 private:
 	unsigned int blocksToWin;	//licznik ile zosta³o bloków do zniszczenia
 	sf::Vector2i paddleSize;	//wielkoœæ paletki

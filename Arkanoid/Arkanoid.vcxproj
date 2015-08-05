@@ -72,12 +72,15 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameState.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ball.h" />
     <ClInclude Include="block.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameState.h" />
+    <ClInclude Include="mainMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

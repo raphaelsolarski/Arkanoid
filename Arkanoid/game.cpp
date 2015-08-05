@@ -3,43 +3,37 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <cstdlib>
+#include "constants.h"
 
-const sf::Vector2f startPaddlePosition = sf::Vector2f(256, 448);	//pozycja pocz¹tkowa paletki
-const float paddleSpeed = 5.0f;	//prêdkoœæ poruszania siê paletki
-
-const sf::Vector2i ballSize = sf::Vector2i(32, 32);
-const sf::Vector2f startBallPosition = sf::Vector2f(304, 224);
-
-const int TILE_SIZE_X = 32;	//wymiary bloczków
-const int TILE_SIZE_Y = 32;
-
-Game::Game()
+Game::Game(int level)
 {
 	//ustawienie na sztywno wymiarów paletki
 	paddleSize = sf::Vector2i(128, 32);
 
 	//Stworzenie pi³eczki
-	ball = new Ball(ballSize);
-	ball->setPosition(startBallPosition);
+	ball = new Ball(BALL_SIZE);
+	ball->setPosition(START_BALL_POSITION);
 
 	//Wczytanie tekstury rakiety
-	if (!paddleTexture.loadFromFile("paddle.png"))
+	if (!paddleTexture.loadFromFile("Graphics/paddle.png"))
 		std::cout << "paddle.png loading failed" << std::endl;
 	
 	//stworzenie bloczka paletki
 	paddle = new Block(paddleSize);
 	paddle->setTexture(paddleTexture);
-	paddle->setPosition(startPaddlePosition);
+	paddle->setPosition(START_PADDLE_POSITION);
 
 	//wyzerowanie licznika bloczków do zniszczenia
 	blocksToWin = 0;
 
 	//WCZYTYWANIE MAPY
-	if (!tilesTexture.loadFromFile("tiles32.png"))
+	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))
 		std::cout << "tiles32.png loading failed" << std::endl;
 
 	//tworzê obiekt strumienia
-	std::ifstream mapFile("restrictedMap.dat");
+	std::string fileName = "Maps/level" + std::to_string(level) + ".dat";	//tworzê nazwê pliku to odtworzenia
+	std::ifstream mapFile(fileName);
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
@@ -135,11 +129,11 @@ void Game::logic()
 	//live input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		if (paddle->getPosition().x > TILE_SIZE_X)
-			paddle->move(sf::Vector2f(-paddleSpeed, 0));
+			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		if (paddle->getPosition().x < window->getSize().x - paddleSize.x- TILE_SIZE_X)
-			paddle->move(sf::Vector2f(paddleSpeed, 0));
+			paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
 	
 	//obs³u¿enie kolizji
 	//kolizja z paletk¹

@@ -1,8 +1,10 @@
-#include <iostream>
 #include <SFML\Graphics.hpp>
+#include <iostream>
+#include <cstdlib>
 #include "gameState.h"
 #include "game.h"
-#include <cstdlib>
+#include "mainMenu.h"
+#include "constants.h"
 
 //docelowa liczba klatek na sekundê
 const int FRAMES_PER_SECOND = 60;
@@ -13,7 +15,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32), "Arkanoid");
 
 	//inicjalizacja state machine
-	GameState::init(new Game(), &window);
+	GameState::init(new MainMenu, &window);
 
 	//bloczek testowy
 	std::cout << window.getSize().x << std::endl;

@@ -1,12 +1,11 @@
 #include "ball.h"
-
-const float ballSpeed = 5.0f;
+#include "constants.h"
 
 Ball::Ball(sf::Vector2i ballSize)
 {
-	directionVector = sf::Vector2f(1, 1);	//na pocz¹tku pi³ka spada ukoœnie w prawo
+	directionVector = START_BALL_DIRECTION;
 
-	if (!ballTexture.loadFromFile("ballTexture.png"))
+	if (!ballTexture.loadFromFile("Graphics/ballTexture.png"))
 		std::cout << "ballTexture.png loading failed" << std::endl;
 	setTexture(ballTexture);
 	setTextureRect(sf::IntRect(sf::Vector2i(0, 0), ballSize));
@@ -29,7 +28,7 @@ void Ball::update()
 	else if (getPosition().y < 32)
 		directionVector.y = 1;
 
-	move(sf::Vector2f(directionVector.x*ballSpeed, directionVector.y*ballSpeed));
+	move(sf::Vector2f(directionVector.x*BALL_SPEED, directionVector.y*BALL_SPEED));
 }
 
 //metoda sprawdza czy nie wyst¹pi³a kolizja i jeœli tak to zmienia kierunek

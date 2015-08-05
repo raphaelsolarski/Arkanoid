@@ -7,6 +7,7 @@ enum GameStates
 {
 	GAME_STATE_NULL,
 	GAME_STATE_INTRO,
+	GAME_STATE_MAIN_MENU,
 	GAME_STATE_GAME,
 	GAME_STATE_EXIT
 };
@@ -27,6 +28,7 @@ public:
 	virtual ~GameState(){};
 
 protected:
+	static int nextLevel;		//numer aktualnego poziomu
 	static GameStates stateID;
 	static GameStates nextState;
 	static GameState *currentState;
