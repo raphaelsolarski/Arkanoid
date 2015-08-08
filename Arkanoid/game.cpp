@@ -115,6 +115,12 @@ void Game::handleEvents()
 	{
 		if (event.type == sf::Event::Closed)
 			window->close();
+
+		if (event.type == sf::Event::KeyPressed)
+		{
+			if (event.key.code == sf::Keyboard::Escape)
+				setNextState(GAME_STATE_PAUSE_MENU);
+		}
 	}
 }
 

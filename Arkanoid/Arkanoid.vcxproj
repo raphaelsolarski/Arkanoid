@@ -74,6 +74,7 @@
     <ClCompile Include="loadingMenu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainMenu.cpp" />
+    <ClCompile Include="pauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ball.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="gameState.h" />
     <ClInclude Include="loadingMenu.h" />
     <ClInclude Include="mainMenu.h" />
+    <ClInclude Include="pauseMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

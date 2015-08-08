@@ -150,6 +150,7 @@ void MainMenu::logic()
 	if (!window->isOpen())
 		setNextState(GAME_STATE_EXIT);
 
+	//aktualizacja pozycji celownika
 	viewFinderSprite.setPosition(sf::Vector2f(interactiveElementsVector[static_cast<int>(actualOption)].getPosition().x - 5,
 												interactiveElementsVector[static_cast<int>(actualOption)].getPosition().y - 5));
 }
