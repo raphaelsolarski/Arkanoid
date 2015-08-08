@@ -10,6 +10,10 @@ AboutMenu::AboutMenu()
 	//domyœlna obecnie wybrana opcja
 	actualOption = 0;
 
+	//wczytuje fonty
+	if (!arkanoidFont.loadFromFile("endor.ttf"))
+		std::cout << "endor.ttf loading failed" << std::endl;
+
 	//wczytuje tekstury
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki t³a
 		std::cout << "tiles32.png loading failed" << std::endl;
@@ -24,7 +28,7 @@ AboutMenu::AboutMenu()
 	sf::Sprite backButton;
 	backButton.setTexture(buttonsTexture);
 	backButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
-	backButton.setPosition(sf::Vector2f(272, 200));
+	backButton.setPosition(sf::Vector2f(272, 350));
 	interactiveElements.push_back(backButton);
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
@@ -76,6 +80,17 @@ AboutMenu::AboutMenu()
 	//przygotowujê celownik
 	viewFinder.setTexture(viewFinderTexture);
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
+
+	//przygotowuje teksty
+	arkanoidText.setFont(arkanoidFont);
+	arkanoidText.setCharacterSize(50);
+	arkanoidText.setPosition(sf::Vector2f(225, 120));
+	arkanoidText.setString(sf::String("Arkanoid"));
+
+	aboutText.setFont(arkanoidFont);
+	aboutText.setCharacterSize(20);
+	aboutText.setPosition(sf::Vector2f(214, 200));
+	aboutText.setString(sf::String("This game was developed \n   by Raphael Solarski\n solarski.rafal@gmail.com"));
 }
 
 void AboutMenu::handleEvents()
@@ -140,6 +155,10 @@ void AboutMenu::render()
 
 	//rysuje celownik
 	window->draw(viewFinder);
+
+	//rysuje teksty
+	window->draw(arkanoidText);
+	window->draw(aboutText);
 
 	window->display();
 	window->clear();

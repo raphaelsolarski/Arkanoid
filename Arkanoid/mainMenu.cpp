@@ -8,6 +8,10 @@ MainMenu::MainMenu()
 	//Ustawienie domyœlnego wyboru
 	actualOption = MENU_OPTION_NEW_GAME;
 
+	//wczytuje fonty
+	if (!arkanoidFont.loadFromFile("endor.ttf"))
+		std::cout << "endor.ttf loading failed" << std::endl;
+
 	//wczytanie potrzebnych tekstur
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))				//bloczki do backgroundu
 		std::cout << "tiled32.png loading failed" << std::endl;
@@ -17,9 +21,6 @@ MainMenu::MainMenu()
 
 	if (!viewFinderTexture.loadFromFile("Graphics/viewFinder.png"))		//celownik
 		std::cout << "viewFinder.png loading failed" << std::endl;
-
-	if (!gameLogoTexture.loadFromFile("Graphics/logoBig.png"))			//logo 
-		std::cout << "logoBig.png loading failed" << std::endl;
 
 	//przygotowujê sprite'a celownika
 	viewFinderSprite.setTexture(viewFinderTexture);
@@ -51,11 +52,6 @@ MainMenu::MainMenu()
 	exitBlock.setTexture(buttonsTexture);
 	exitBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 96), sf::Vector2i(96, 32)));
 	interactiveElementsVector.push_back(exitBlock);
-
-	//przygotowujê bloczek logo
-	Block logoBlock(sf::Vector2i(580, 167));
-	logoBlock.setTexture(gameLogoTexture);
-	logoBlock.setPosition(sf::Vector2f(30, 0));
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
@@ -104,8 +100,12 @@ MainMenu::MainMenu()
 		}
 	}
 
-	//wrzucam logo
-	backgroundElementsVector.push_back(logoBlock);
+	//przygotowuje teksty
+	arkanoidText.setFont(arkanoidFont);
+	arkanoidText.setCharacterSize(85);
+	arkanoidText.setColor(sf::Color(0, 0, 0, 255));
+	arkanoidText.setPosition(sf::Vector2f(165, 60));
+	arkanoidText.setString(sf::String("Arkanoid"));
 }
 
 void MainMenu::handleEvents()
@@ -182,6 +182,9 @@ void MainMenu::render()
 
 	//rysowanie celownika
 	window->draw(viewFinderSprite);
+
+	//rysuje nazwê gry
+	window->draw(arkanoidText);
 
 	window->display();
 	window->clear();

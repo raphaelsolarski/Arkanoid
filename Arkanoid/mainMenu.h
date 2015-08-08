@@ -24,10 +24,11 @@ public:
 	void logic();
 	void render();
 private:
+	sf::Font arkanoidFont;
+	sf::Text arkanoidText;	//nazwa gry
 	sf::Texture tilesTexture;	//tekstura bloczków z których dla klimatu bêdzie tak¿e zbudowane menu
 	sf::Texture buttonsTexture;	//set tekstur do przycisków
 	sf::Texture viewFinderTexture;	//tekstura do celownika
-	sf::Texture gameLogoTexture;	//tekstura logo(du¿e)
 	std::vector<Block> backgroundElementsVector;	//wektor zawieraj¹cy wszystkie elementy stanowi¹ce background
 	std::vector<Block> interactiveElementsVector;	//wektor zawieraj¹cy interaktywne elementy menu(w odpowiedniej kolejnoœci)
 	sf::Sprite viewFinderSprite;	//sprite celownika wyboru

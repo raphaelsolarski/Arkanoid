@@ -14,6 +14,8 @@ public:
 	void logic();
 	void render();
 private:
+	sf::Font arkanoidFont;
+	sf::Text arkanoidText;	//nazwa gry
 	sf::Texture tilesTexture;	//set teksturek do background'u
 	sf::Texture buttonsTexture;	//set teksturek do "przycisków"
 	sf::Texture viewFinderTexture;		//tekstura celownika

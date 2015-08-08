@@ -17,9 +17,6 @@ int main()
 	//inicjalizacja state machine
 	GameState::init(new MainMenu, &window);
 
-	//bloczek testowy
-	std::cout << window.getSize().x << std::endl;
-
 	//Main Loop
 	while (GameState::getStateID() != GAME_STATE_EXIT)
 	{

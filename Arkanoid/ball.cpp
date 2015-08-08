@@ -40,7 +40,6 @@ bool Ball::bounce(Block &block)
 		getPosition().y <= block.getPosition().y + block.getBlockSize().y &&
 		getPosition().y + ballSize.y >= block.getPosition().y)
 	{
-		std::cout << "Kolizja" << std::endl;
 		if (directionVector.x == 1 && directionVector.y == 1)
 		{
 			if (((getPosition().x < block.getPosition().x)?(getPosition().x + ballSize.x - block.getPosition().x):

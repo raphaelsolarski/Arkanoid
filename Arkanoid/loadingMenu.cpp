@@ -22,7 +22,7 @@ LoadingMenu::LoadingMenu()
 	sf::Sprite backButton;
 	backButton.setTexture(buttonsTexture);
 	backButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
-	backButton.setPosition(sf::Vector2f(64, 32));
+	backButton.setPosition(sf::Vector2f(272, 32));
 	interactiveElements.push_back(backButton);
 
 	//przygotowanie sprite'ów leveli(przycisków)

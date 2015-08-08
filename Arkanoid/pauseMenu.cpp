@@ -7,6 +7,10 @@ PauseMenu::PauseMenu()
 	//domyœlna obecnie wybrana opcja
 	actualOption = 0;
 
+	//wczytuje fonty
+	if (!arkanoidFont.loadFromFile("endor.ttf"))
+		std::cout << "endor.ttf loading failed" << std::endl;
+
 	//wczytuje tekstury
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki t³a
 		std::cout << "tiles32.png loading failed" << std::endl;
@@ -88,6 +92,13 @@ PauseMenu::PauseMenu()
 	//przygotowujê celownik
 	viewFinder.setTexture(viewFinderTexture);
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
+
+	//przygotowuje teksty
+	arkanoidText.setFont(arkanoidFont);
+	arkanoidText.setCharacterSize(85);
+	arkanoidText.setColor(sf::Color(0, 0, 0, 255));
+	arkanoidText.setPosition(sf::Vector2f(165, 60));
+	arkanoidText.setString(sf::String("Arkanoid"));
 }
 
 //destruktor
@@ -166,6 +177,9 @@ void PauseMenu::render()
 
 	//rysuje celownik
 	window->draw(viewFinder);
+
+	//rysujê nazwê gry
+	window->draw(arkanoidText);
 
 	window->display();
 	window->clear();
