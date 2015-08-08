@@ -35,6 +35,14 @@ Game::Game(int level)
 	std::string fileName = "Maps/level" + std::to_string(level) + ".dat";	//tworzê nazwê pliku to odtworzenia
 	std::ifstream mapFile(fileName);
 
+	if (!mapFile.is_open())
+	{
+		std::cout << "Brak odpowiedniego pliku mapy" << std::endl;
+		system("pause");
+		exit(-1);
+	}
+
+
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
 	std::vector<std::vector<sf::Vector2i>> map;
@@ -120,11 +128,11 @@ void Game::logic()
 
 	//sprawdzenie czy pi³ka nie wypad³a z planszy
 	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
-		setNextState(GAME_STATE_EXIT);
+		setNextState(GAME_STATE_MAIN_MENU);
 
 	//sprawdzam czy nie zniszczono wszystkich bloczków
 	if (blocksToWin <= 0)
-		setNextState(GAME_STATE_EXIT);
+		setNextState(GAME_STATE_MAIN_MENU);
 
 	//live input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))

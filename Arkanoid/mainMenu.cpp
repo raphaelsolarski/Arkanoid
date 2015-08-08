@@ -1,7 +1,7 @@
 //plik implemenuj¹cy g³ówne menu gry
+#include <fstream>
 #include "mainMenu.h"
 #include "constants.h"
-#include <fstream>
 
 MainMenu::MainMenu()
 {
@@ -118,10 +118,11 @@ void MainMenu::handleEvents()
 				switch (actualOption)
 				{
 				case MENU_OPTION_NEW_GAME:
-					nextLevel = 0;
+					nextLevel = 1;
 					setNextState(GAME_STATE_GAME);
 					break;
 				case MENU_OPTION_LOAD_GAME:
+					setNextState(GAME_STATE_LOADING_MENU);
 					break;
 				case MENU_OPTION_EXIT:
 					setNextState(GAME_STATE_EXIT);

@@ -1,10 +1,10 @@
 //plik nag³ówkowy menu g³ównego 
 #pragma once
-#include "gameState.h"
-#include "block.h"
 #include <SFML\Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include "gameState.h"
+#include "block.h"
 
 //typ okreœlaj¹cy opcje w menu
 enum MenuOption
