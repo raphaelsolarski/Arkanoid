@@ -6,6 +6,8 @@
 #include "loadingMenu.h"
 #include "pauseMenu.h"
 #include "levelFinishedMenu.h"
+#include "defeatMenu.h"
+#include "aboutMenu.h"
 
 //pocz¹tkowe ustawienie zmiennych statycznych
 int GameState::nextLevel = 1; //nastêpny level jest domyœlnie ustawiony na level pierwszy
@@ -61,6 +63,16 @@ void GameState::changeState()
 		case GAME_STATE_LEVEL_FINISHED_MENU:
 			currentState = new LevelFinishedMenu();
 			stateID = GAME_STATE_LEVEL_FINISHED_MENU;
+			break;
+
+		case GAME_STATE_DEFEAT_MENU:
+			currentState = new DefeatMenu();
+			stateID = GAME_STATE_DEFEAT_MENU;
+			break;
+
+		case GAME_STATE_ABOUT_MENU:
+			currentState = new AboutMenu();
+			stateID = GAME_STATE_ABOUT_MENU;
 			break;
 
 		case GAME_STATE_EXIT:

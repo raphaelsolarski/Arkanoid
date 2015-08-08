@@ -1,11 +1,11 @@
-//plik implementuj¹cy menu ukoñczenia poziomu
+//plik implementuj¹cy 
 #include <iostream>
 #include <fstream>
-#include "levelFinishedMenu.h"
+#include "defeatMenu.h"
 #include "constants.h"
 
 //konstruktor
-LevelFinishedMenu::LevelFinishedMenu()
+DefeatMenu::DefeatMenu()
 {
 	//domyœlna obecnie wybrana opcja
 	actualOption = 0;
@@ -14,31 +14,24 @@ LevelFinishedMenu::LevelFinishedMenu()
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki t³a
 		std::cout << "tiles32.png loading failed" << std::endl;
 
-	if (!buttonsTexture.loadFromFile("Graphics/levelFinishedMenuButtons.png"))	//przyciski
+	if (!buttonsTexture.loadFromFile("Graphics/defeatMenuButtons.png"))	//przyciski
 		std::cout << "loadingMenuButtons.png loading failed" << std::endl;
 
 	if (!viewFinderTexture.loadFromFile("Graphics/viewFinder.png"))	//teksturea celownika
 		std::cout << "viewFinder.png loading failed" << std::endl;
 
-	//przygotowujê sprite'a "NEXT"
-	sf::Sprite nextButton;
-	nextButton.setTexture(buttonsTexture);
-	nextButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
-	nextButton.setPosition(sf::Vector2f(272, 200));
-	interactiveElements.push_back(nextButton);
-
 	//przygotowujê sprite'a "REPEAT"
 	sf::Sprite repeatButton;
 	repeatButton.setTexture(buttonsTexture);
-	repeatButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(96, 32)));
-	repeatButton.setPosition(sf::Vector2f(272, 248));
+	repeatButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
+	repeatButton.setPosition(sf::Vector2f(272, 200));
 	interactiveElements.push_back(repeatButton);
 
 	//przygotowujê sprite'a "MENU"
 	sf::Sprite menuButton;
 	menuButton.setTexture(buttonsTexture);
-	menuButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 64), sf::Vector2i(96, 32)));
-	menuButton.setPosition(sf::Vector2f(272, 296));
+	menuButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(96, 32)));
+	menuButton.setPosition(sf::Vector2f(272, 248));
 	interactiveElements.push_back(menuButton);
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
@@ -46,7 +39,7 @@ LevelFinishedMenu::LevelFinishedMenu()
 	std::vector<std::vector<sf::Vector2i>> map;
 	std::vector<sf::Vector2i> tmpRow;
 	std::string tmpString;
-	std::ifstream mapFile("Maps/levelFinishedMenu.dat");		//sworzenie obiektu strumienia
+	std::ifstream mapFile("Maps/defeatMenu.dat");		//sworzenie obiektu strumienia
 
 	//Proces mapowania pliku tekstowego do tablicy dynamicznej
 	if (mapFile.is_open())
@@ -87,21 +80,12 @@ LevelFinishedMenu::LevelFinishedMenu()
 			}
 		}
 	}
-
 	//przygotowujê celownik
 	viewFinder.setTexture(viewFinderTexture);
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
 }
 
-//destruktor
-LevelFinishedMenu::~LevelFinishedMenu()
-{
-
-}
-
-//metody wirtualne dziedziczone od GameState
-//czyli MainLoop
-void LevelFinishedMenu::handleEvents()
+void DefeatMenu::handleEvents()
 {
 	sf::Event event;
 	while (window->pollEvent(event))
@@ -110,32 +94,27 @@ void LevelFinishedMenu::handleEvents()
 		{
 			window->close();
 		}
+
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Return)
 			{
 				switch (actualOption)
 				{
-				case 0:	//nastêpny poziom
-					nextLevel++;
+				case 0:	//repeat
 					setNextState(GAME_STATE_GAME);
 					break;
-
-				case 1:	//powtórzenie poziomu
-					setNextState(GAME_STATE_GAME);
-					break;
-
-				case 2:	//do menu
+				case 1:	//menu
 					setNextState(GAME_STATE_MAIN_MENU);
 					break;
 				}
 			}
-			else if (event.key.code == sf::Keyboard::Down)	//naciœniêto klawisz w dó³
+			else if (event.key.code == sf::Keyboard::Down)
 			{
-				if (actualOption < 2)
+				if (actualOption < 1)
 					actualOption++;
 			}
-			else if (event.key.code == sf::Keyboard::Up)	//naciœniêto klawisz do góry
+			else if (event.key.code == sf::Keyboard::Up)
 			{
 				if (actualOption > 0)
 					actualOption--;
@@ -144,33 +123,32 @@ void LevelFinishedMenu::handleEvents()
 	}
 }
 
-void LevelFinishedMenu::logic()
+void DefeatMenu::logic()
 {
-	//sprawdzam czy okno nie zosta³o zamkniête
+	//sprawdzam czy okno gry jest otwarte
 	if (!window->isOpen())
-	{
 		setNextState(GAME_STATE_EXIT);
-	}
 
-	//uaktualniam pozycjê celownika
-	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
+	//aktualizacja pozycji celownika
+	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5,
+		interactiveElements[actualOption].getPosition().y - 5));
 }
 
-void LevelFinishedMenu::render()
+void DefeatMenu::render()
 {
-	//rysuje elementy backgroundu
+	//rysuje t³o
 	for (unsigned int i = 0; i < backgroundElements.size(); i++)
 	{
 		window->draw(backgroundElements[i]);
 	}
 
-	//rysuje przyciski
+	//rysuje blocki przycisków
 	for (unsigned int i = 0; i < interactiveElements.size(); i++)
 	{
 		window->draw(interactiveElements[i]);
 	}
 
-	//renderuje celownik
+	//rysuje celownik
 	window->draw(viewFinder);
 
 	window->display();

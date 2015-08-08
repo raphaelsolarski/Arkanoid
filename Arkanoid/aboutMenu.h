@@ -1,14 +1,14 @@
-//plik nag³ówkowy menu wczytywania poziomów
+//plik nag³ówkowy menu pora¿ki
 #pragma once
 #include <SFML\Graphics.hpp>
 #include <vector>
 #include <iostream>
 #include "gameState.h"
 
-class LoadingMenu : public GameState
+class AboutMenu : public GameState
 {
 public:
-	LoadingMenu();		//konstruktor
+	AboutMenu();		//konstruktor
 	void handleEvents();
 	void logic();
 	void render();

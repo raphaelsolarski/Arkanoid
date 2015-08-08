@@ -131,7 +131,7 @@ void Game::logic()
 
 	//sprawdzenie czy pi³ka nie wypad³a z planszy
 	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
-		setNextState(GAME_STATE_MAIN_MENU);
+		setNextState(GAME_STATE_DEFEAT_MENU);
 
 	//sprawdzam czy nie zniszczono wszystkich bloczków
 	if (blocksToWin <= 0)

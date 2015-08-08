@@ -67,8 +67,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aboutMenu.cpp" />
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="block.cpp" />
+    <ClCompile Include="defeatMenu.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameState.cpp" />
     <ClCompile Include="levelFinishedMenu.cpp" />
@@ -78,9 +80,11 @@
     <ClCompile Include="pauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aboutMenu.h" />
     <ClInclude Include="ball.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="defeatMenu.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameState.h" />
     <ClInclude Include="levelFinishedMenu.h" />

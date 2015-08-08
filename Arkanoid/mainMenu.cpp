@@ -29,18 +29,28 @@ MainMenu::MainMenu()
 	newGameBlock.setPosition(sf::Vector2f(272, 200));
 	newGameBlock.setTexture(buttonsTexture);
 	newGameBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
+	interactiveElementsVector.push_back(newGameBlock);
 
 	//przygotowujê bloczek "LOAD"
 	Block loadBlock(sf::Vector2i(96, 32));
 	loadBlock.setPosition(sf::Vector2f(272, 248));
 	loadBlock.setTexture(buttonsTexture);
 	loadBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(96, 32)));
+	interactiveElementsVector.push_back(loadBlock);
+
+	//przygotowujê bloczek "ABOUT"
+	Block aboutBlock(sf::Vector2i(96, 32));
+	aboutBlock.setPosition(sf::Vector2f(272, 296));
+	aboutBlock.setTexture(buttonsTexture);
+	aboutBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 64), sf::Vector2i(96, 32)));
+	interactiveElementsVector.push_back(aboutBlock);
 
 	//przygotowujê bloczek "EXIT"
 	Block exitBlock(sf::Vector2i(96, 32));
-	exitBlock.setPosition(sf::Vector2f(272, 296));
+	exitBlock.setPosition(sf::Vector2f(272, 344));
 	exitBlock.setTexture(buttonsTexture);
-	exitBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 64), sf::Vector2i(96, 32)));
+	exitBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, 96), sf::Vector2i(96, 32)));
+	interactiveElementsVector.push_back(exitBlock);
 
 	//przygotowujê bloczek logo
 	Block logoBlock(sf::Vector2i(580, 167));
@@ -94,11 +104,6 @@ MainMenu::MainMenu()
 		}
 	}
 
-	//wrzucam do wektora elementów bloczki interaktywne
-	interactiveElementsVector.push_back(newGameBlock);
-	interactiveElementsVector.push_back(loadBlock);
-	interactiveElementsVector.push_back(exitBlock);
-
 	//wrzucam logo
 	backgroundElementsVector.push_back(logoBlock);
 }
@@ -121,9 +126,15 @@ void MainMenu::handleEvents()
 					nextLevel = 1;
 					setNextState(GAME_STATE_GAME);
 					break;
+
 				case MENU_OPTION_LOAD_GAME:
 					setNextState(GAME_STATE_LOADING_MENU);
 					break;
+					
+				case MENU_OPTION_ABOUT:
+					setNextState(GAME_STATE_ABOUT_MENU);
+					break;
+
 				case MENU_OPTION_EXIT:
 					setNextState(GAME_STATE_EXIT);
 					break;
@@ -136,7 +147,7 @@ void MainMenu::handleEvents()
 				break;
 
 			case sf::Keyboard::Down:
-				if (actualOption < 2)
+				if (actualOption < 3)
 					actualOption = static_cast<MenuOption>(actualOption + 1);
 				break;
 			}
