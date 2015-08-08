@@ -5,6 +5,7 @@
 #include "mainMenu.h"
 #include "loadingMenu.h"
 #include "pauseMenu.h"
+#include "levelFinishedMenu.h"
 
 //pocz¹tkowe ustawienie zmiennych statycznych
 int GameState::nextLevel = 1; //nastêpny level jest domyœlnie ustawiony na level pierwszy
@@ -55,6 +56,11 @@ void GameState::changeState()
 			currentState = sleepedState;
 			sleepedState = nullptr;
 			stateID = GAME_STATE_GAME;
+			break;
+
+		case GAME_STATE_LEVEL_FINISHED_MENU:
+			currentState = new LevelFinishedMenu();
+			stateID = GAME_STATE_LEVEL_FINISHED_MENU;
 			break;
 
 		case GAME_STATE_EXIT:

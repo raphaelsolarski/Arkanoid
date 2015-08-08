@@ -1,10 +1,10 @@
 //plik nag³ówkowy state'a g³ównej rogrywki
 #pragma once
+#include <vector>
+#include <SFML\Graphics.hpp>
 #include "block.h"
 #include "ball.h"
 #include "gameState.h"
-#include "SFML\Graphics.hpp"
-#include <vector>
 
 class Game : public GameState
 {
@@ -18,7 +18,6 @@ public:
 	void render();
 private:
 	unsigned int blocksToWin;	//licznik ile zosta³o bloków do zniszczenia
-	sf::Vector2i paddleSize;	//wielkoœæ paletki
 	Ball * ball;		//Pi³eczka
 	Block * paddle;		//Paletka
 	std::vector<Block> blocksVector;	//wektor zawieraj¹cy blocki znajduj¹ce siê wewn¹trz otoczki

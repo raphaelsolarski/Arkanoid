@@ -19,6 +19,7 @@ const sf::Vector2f START_BALL_DIRECTION = sf::Vector2f(1, 1);
 //paddle
 const sf::Vector2f START_PADDLE_POSITION = sf::Vector2f(256, 448);	//pozycja pocz¹tkowa paletki
 const float PADDLE_SPEED = 5.0f;	//prêdkoœæ poruszania siê paletki
+const sf::Vector2i PADDLE_SIZE = sf::Vector2i(128, 32);	//wymiary paletki
 
 //loading menu 
 const unsigned int levelsInMenu = 11;	//liczba poziomów do wybrania w menu

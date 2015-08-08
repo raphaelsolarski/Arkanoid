@@ -8,9 +8,6 @@
 
 Game::Game(int level)
 {
-	//ustawienie na sztywno wymiarów paletki
-	paddleSize = sf::Vector2i(128, 32);
-
 	//Stworzenie pi³eczki
 	ball = new Ball(BALL_SIZE);
 	ball->setPosition(START_BALL_POSITION);
@@ -20,7 +17,7 @@ Game::Game(int level)
 		std::cout << "paddle.png loading failed" << std::endl;
 	
 	//stworzenie bloczka paletki
-	paddle = new Block(paddleSize);
+	paddle = new Block(PADDLE_SIZE);
 	paddle->setTexture(paddleTexture);
 	paddle->setPosition(START_PADDLE_POSITION);
 
@@ -138,7 +135,7 @@ void Game::logic()
 
 	//sprawdzam czy nie zniszczono wszystkich bloczków
 	if (blocksToWin <= 0)
-		setNextState(GAME_STATE_MAIN_MENU);
+		setNextState(GAME_STATE_LEVEL_FINISHED_MENU);
 
 	//live input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -146,7 +143,7 @@ void Game::logic()
 			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		if (paddle->getPosition().x < window->getSize().x - paddleSize.x- TILE_SIZE_X)
+		if (paddle->getPosition().x < window->getSize().x - PADDLE_SIZE.x- TILE_SIZE_X)
 			paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
 	
 	//obs³u¿enie kolizji
