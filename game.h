@@ -28,4 +28,5 @@ private:
 	void preparePaddle();
 	void loadMap(int level);
 	void closeGameWhenWindowClosed();
+	void closeGameWhenBallOutside();
 };

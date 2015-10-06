@@ -40,10 +40,8 @@ void Game::handleEvents()
 void Game::logic()
 {
 	closeGameWhenWindowClosed();
-	closeWhenBallOutside();
-	//sprawdzenie czy pi³ka nie wypad³a z planszy
-	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
-		setNextState(GAME_STATE_DEFEAT_MENU);
+	closeGameWhenBallOutside();
+
 
 	//sprawdzam czy nie zniszczono wszystkich bloczków
 	if (blocksToWin <= 0)
@@ -211,4 +209,11 @@ void Game::closeGameWhenWindowClosed()
 	{
 		setNextState(GAME_STATE_EXIT);
 	}
+}
+
+void Game::closeGameWhenBallOutside()
+{
+	//sprawdzenie czy pi³ka nie wypad³a z planszy
+	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
+		setNextState(GAME_STATE_DEFEAT_MENU);
 }
