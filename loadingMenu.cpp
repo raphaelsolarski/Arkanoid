@@ -1,24 +1,18 @@
-//plik implementuj¹cy ekran informuj¹cy o twórcy
-#include <iostream>
+//implementacja menu wczytywania poziomu
 #include <fstream>
-#include "aboutMenu.h"
+#include "loadingMenu.h"
 #include "constants.h"
 
-//konstruktor
-AboutMenu::AboutMenu()
+LoadingMenu::LoadingMenu()
 {
 	//domyœlna obecnie wybrana opcja
 	actualOption = 0;
-
-	//wczytuje fonty
-	if (!arkanoidFont.loadFromFile("endor.ttf"))
-		std::cout << "endor.ttf loading failed" << std::endl;
 
 	//wczytuje tekstury
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki t³a
 		std::cout << "tiles32.png loading failed" << std::endl;
 
-	if (!buttonsTexture.loadFromFile("Graphics/aboutMenuButtons.png"))	//przyciski
+	if (!buttonsTexture.loadFromFile("Graphics/loadingMenuButtons.png"))	//przyciski
 		std::cout << "loadingMenuButtons.png loading failed" << std::endl;
 
 	if (!viewFinderTexture.loadFromFile("Graphics/viewFinder.png"))	//teksturea celownika
@@ -28,15 +22,29 @@ AboutMenu::AboutMenu()
 	sf::Sprite backButton;
 	backButton.setTexture(buttonsTexture);
 	backButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
-	backButton.setPosition(sf::Vector2f(272, 350));
+	backButton.setPosition(sf::Vector2f(272, 32));
 	interactiveElements.push_back(backButton);
+
+	//przygotowanie sprite'ów leveli(przycisków)
+	unsigned int collumn = 0;
+	for (unsigned int i = 1; i <= levelsInMenu; i++)
+	{
+		if (i % 9 == 0)
+			collumn++;
+
+		sf::Sprite newLevelBlock;
+		newLevelBlock.setTexture(buttonsTexture);
+		newLevelBlock.setTextureRect(sf::IntRect(sf::Vector2i(0, i*32), sf::Vector2i(96, 32)));
+		newLevelBlock.setPosition(sf::Vector2f(backButton.getPosition().x + collumn * 106, backButton.getPosition().y + 42 * i - 378 * collumn));
+		interactiveElements.push_back(newLevelBlock);
+	}
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
-	std::vector<std::vector<sf::Vector2i>> map;
+	std::vector<std::vector<sf::Vector2i> > map;
 	std::vector<sf::Vector2i> tmpRow;
 	std::string tmpString;
-	std::ifstream mapFile("Maps/aboutMenu.dat");		//sworzenie obiektu strumienia
+	std::ifstream mapFile("Maps/mainMenu.dat");		//sworzenie obiektu strumienia
 
 	//Proces mapowania pliku tekstowego do tablicy dynamicznej
 	if (mapFile.is_open())
@@ -77,49 +85,39 @@ AboutMenu::AboutMenu()
 			}
 		}
 	}
+
 	//przygotowujê celownik
 	viewFinder.setTexture(viewFinderTexture);
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
-
-	//przygotowuje teksty
-	arkanoidText.setFont(arkanoidFont);
-	arkanoidText.setCharacterSize(50);
-	arkanoidText.setPosition(sf::Vector2f(225, 120));
-	arkanoidText.setString(sf::String("Arkanoid"));
-
-	aboutText.setFont(arkanoidFont);
-	aboutText.setCharacterSize(20);
-	aboutText.setPosition(sf::Vector2f(214, 200));
-	aboutText.setString(sf::String("This game was developed \n   by Raphael Solarski\n solarski.rafal@gmail.com"));
 }
 
-void AboutMenu::handleEvents()
+void LoadingMenu::handleEvents()
 {
 	sf::Event event;
 	while (window->pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
-		{
 			window->close();
-		}
-
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Return)
 			{
-				switch (actualOption)
+				if (actualOption == 0)
 				{
-				case 0:	//back to menu
 					setNextState(GAME_STATE_MAIN_MENU);
-					break;
+				}
+				else
+				{	//wybrano bloczek level'a
+					nextLevel = actualOption;
+					setNextState(GAME_STATE_GAME);
 				}
 			}
-			else if (event.key.code == sf::Keyboard::Down)
+			else if (event.key.code == sf::Keyboard::Down)	//naciœniêto klawisz w dó³
 			{
-				if (actualOption < 0)
+				if (actualOption < levelsInMenu)
 					actualOption++;
 			}
-			else if (event.key.code == sf::Keyboard::Up)
+			else if (event.key.code == sf::Keyboard::Up)	//naciœniêto klawisz do góry
 			{
 				if (actualOption > 0)
 					actualOption--;
@@ -128,37 +126,32 @@ void AboutMenu::handleEvents()
 	}
 }
 
-void AboutMenu::logic()
+void LoadingMenu::logic()
 {
-	//sprawdzam czy okno gry jest otwarte
+	//sprawdzam czy onko wci¹¿ jest otwarte
 	if (!window->isOpen())
 		setNextState(GAME_STATE_EXIT);
 
-	//aktualizacja pozycji celownika
-	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5,
-		interactiveElements[actualOption].getPosition().y - 5));
+	//uaktualniam pozycjê celownika
+	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
 }
 
-void AboutMenu::render()
+void LoadingMenu::render()
 {
-	//rysuje t³o
+	//rysuje elementy backgroundu
 	for (unsigned int i = 0; i < backgroundElements.size(); i++)
 	{
 		window->draw(backgroundElements[i]);
 	}
 
-	//rysuje blocki przycisków
+	//rysuje przyciski
 	for (unsigned int i = 0; i < interactiveElements.size(); i++)
 	{
 		window->draw(interactiveElements[i]);
 	}
 
-	//rysuje celownik
+	//renderuje celownik
 	window->draw(viewFinder);
-
-	//rysuje teksty
-	window->draw(arkanoidText);
-	window->draw(aboutText);
 
 	window->display();
 	window->clear();

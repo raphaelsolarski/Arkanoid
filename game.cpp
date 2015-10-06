@@ -3,16 +3,118 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <cstdlib>
+#include <stdlib.h>
 #include "constants.h"
 
 Game::Game(int level)
 {
-	//Stworzenie pi³eczki
+	prepareBall();
+	preparePaddle();
+	
+	//wyzerowanie licznika bloczków do zniszczenia
+	blocksToWin = 0;
+	
+	loadMap(level);
+}
+
+Game::~Game()
+{
+}
+
+void Game::handleEvents()
+{
+	sf::Event event;
+	while (window->pollEvent(event))
+	{
+		if (event.type == sf::Event::Closed)
+			window->close();
+
+		if (event.type == sf::Event::KeyPressed)
+		{
+			if (event.key.code == sf::Keyboard::Escape)
+				setNextState(GAME_STATE_PAUSE_MENU);
+		}
+	}
+}
+
+void Game::logic()
+{
+	closeGameWhenWindowClosed();
+	closeWhenBallOutside();
+	//sprawdzenie czy pi³ka nie wypad³a z planszy
+	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
+		setNextState(GAME_STATE_DEFEAT_MENU);
+
+	//sprawdzam czy nie zniszczono wszystkich bloczków
+	if (blocksToWin <= 0)
+		setNextState(GAME_STATE_LEVEL_FINISHED_MENU);
+
+	//live input
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		if (paddle->getPosition().x > TILE_SIZE_X)
+			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		if (paddle->getPosition().x < window->getSize().x - PADDLE_SIZE.x- TILE_SIZE_X)
+			paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
+	
+	//obs³u¿enie kolizji
+	//kolizja z paletk¹
+	ball->bounce(*paddle);
+
+	//kolizje z bloczkami
+	for (std::vector<Block>::iterator it = blocksVector.begin(); it != blocksVector.end(); it++)
+	{
+		if (ball->bounce(*it))
+		{	
+			//je¶li trafiony bloczek jest zniszczalny to nale¿y go zniszczyæ
+			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
+			{
+				blocksVector.erase(it);
+				blocksToWin--;
+			}
+			break;
+		}
+	}
+
+	//przemieszczenie pi³ki
+	ball->update();
+}
+
+void Game::render()
+{
+	//rysuje ramkê
+	for (unsigned int i = 0; i < borderVector.size(); i++)
+	{
+		window->draw(borderVector[i]);
+	}
+
+	//rysuje blocki wewn¹trz ramki
+	for (unsigned int i = 0; i < blocksVector.size(); i++)
+	{
+		window->draw(blocksVector[i]);
+	}
+
+	//rysuje bi³kê
+	window->draw(*ball);
+
+	//rysuje paletkê
+	window->draw(*paddle);
+
+	window->display();
+	window->clear();
+}
+
+void Game::prepareBall()
+{
 	ball = new Ball(BALL_SIZE);
 	ball->setPosition(START_BALL_POSITION);
+}
 
-	//Wczytanie tekstury rakiety
+
+void Game::preparePaddle()
+{
+		//Wczytanie tekstury rakiety
 	if (!paddleTexture.loadFromFile("Graphics/paddle.png"))
 		std::cout << "paddle.png loading failed" << std::endl;
 	
@@ -20,13 +122,14 @@ Game::Game(int level)
 	paddle = new Block(PADDLE_SIZE);
 	paddle->setTexture(paddleTexture);
 	paddle->setPosition(START_PADDLE_POSITION);
+}
 
-	//wyzerowanie licznika bloczków do zniszczenia
-	blocksToWin = 0;
-
+void Game::loadMap(int level)
+{
 	//WCZYTYWANIE MAPY
 	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))
 		std::cout << "tiles32.png loading failed" << std::endl;
+
 
 	//tworzê obiekt strumienia
 	std::string fileName = "Maps/level" + std::to_string(level) + ".dat";	//tworzê nazwê pliku to odtworzenia
@@ -42,7 +145,7 @@ Game::Game(int level)
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
-	std::vector<std::vector<sf::Vector2i>> map;
+	std::vector<std::vector<sf::Vector2i> > map;
 	std::vector<sf::Vector2i> tmpRow;
 
 	std::string tmpString;
@@ -101,94 +204,11 @@ Game::Game(int level)
 	}
 }
 
-Game::~Game()
+void Game::closeGameWhenWindowClosed()
 {
-}
-
-void Game::handleEvents()
-{
-	sf::Event event;
-	while (window->pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed)
-			window->close();
-
-		if (event.type == sf::Event::KeyPressed)
-		{
-			if (event.key.code == sf::Keyboard::Escape)
-				setNextState(GAME_STATE_PAUSE_MENU);
-		}
-	}
-}
-
-void Game::logic()
-{
-	//sprawdzenie czy okno nie zosta³o zamkniête
+		//sprawdzenie czy okno nie zosta³o zamkniête
 	if (!window->isOpen())
 	{
 		setNextState(GAME_STATE_EXIT);
 	}
-
-	//sprawdzenie czy pi³ka nie wypad³a z planszy
-	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
-		setNextState(GAME_STATE_DEFEAT_MENU);
-
-	//sprawdzam czy nie zniszczono wszystkich bloczków
-	if (blocksToWin <= 0)
-		setNextState(GAME_STATE_LEVEL_FINISHED_MENU);
-
-	//live input
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		if (paddle->getPosition().x > TILE_SIZE_X)
-			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		if (paddle->getPosition().x < window->getSize().x - PADDLE_SIZE.x- TILE_SIZE_X)
-			paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
-	
-	//obs³u¿enie kolizji
-	//kolizja z paletk¹
-	ball->bounce(*paddle);
-
-	//kolizje z bloczkami
-	for (std::vector<Block>::iterator it = blocksVector.begin(); it != blocksVector.end(); it++)
-	{
-		if (ball->bounce(*it))
-		{	
-			//jeœli trafiony bloczek jest zniszczalny to nale¿y go zniszczyæ
-			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
-			{
-				blocksVector.erase(it);
-				blocksToWin--;
-			}
-			break;
-		}
-	}
-
-	//przemieszczenie pi³ki
-	ball->update();
-}
-
-void Game::render()
-{
-	//rysuje ramkê
-	for (unsigned int i = 0; i < borderVector.size(); i++)
-	{
-		window->draw(borderVector[i]);
-	}
-
-	//rysuje blocki wewn¹trz ramki
-	for (unsigned int i = 0; i < blocksVector.size(); i++)
-	{
-		window->draw(blocksVector[i]);
-	}
-
-	//rysuje bi³kê
-	window->draw(*ball);
-
-	//rysuje paletkê
-	window->draw(*paddle);
-
-	window->display();
-	window->clear();
 }

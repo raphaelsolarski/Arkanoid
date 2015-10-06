@@ -1,6 +1,6 @@
 //plik nag³ówkowy menu g³ównego 
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
 #include "gameState.h"

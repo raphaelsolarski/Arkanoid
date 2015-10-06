@@ -1,19 +1,21 @@
-//plik nag³ówkowy menu wczytywania poziomów
+//plik nag³ówkowy menu, które wyœwietla siê po ukoñczeniu poziomu
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
-#include <iostream>
 #include "gameState.h"
 
-class LoadingMenu : public GameState
+class LevelFinishedMenu : public GameState
 {
 public:
-	LoadingMenu();		//konstruktor
+	LevelFinishedMenu(); //konstruktor
+	~LevelFinishedMenu();	//destruktor
 	void handleEvents();
 	void logic();
 	void render();
-
+	
 private:
+	sf::Font arkanoidFont;
+	sf::Text arkanoidText;	//nazwa gry
 	sf::Texture tilesTexture;	//set teksturek do background'u
 	sf::Texture buttonsTexture;	//set teksturek do "przycisków"
 	sf::Texture viewFinderTexture;		//tekstura celownika

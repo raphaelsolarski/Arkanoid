@@ -1,6 +1,6 @@
 //plik zawieraj¹cy wszystkie sta³e w grze(taki troche config)
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 //window
 const int SCREEN_WIDTH = 640;

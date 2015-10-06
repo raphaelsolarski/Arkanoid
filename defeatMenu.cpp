@@ -39,7 +39,7 @@ DefeatMenu::DefeatMenu()
 
 	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
 	//te tablice s¹ potrzebne tylko podczas budowania mapy
-	std::vector<std::vector<sf::Vector2i>> map;
+	std::vector<std::vector<sf::Vector2i> > map;
 	std::vector<sf::Vector2i> tmpRow;
 	std::string tmpString;
 	std::ifstream mapFile("Maps/defeatMenu.dat");		//sworzenie obiektu strumienia

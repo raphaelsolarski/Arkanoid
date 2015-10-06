@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 //typ okreœlaj¹cy wszystkie stany gry
 //jeœli dodajesz nowy stan to musisz go tutaj uwzglêdniæ

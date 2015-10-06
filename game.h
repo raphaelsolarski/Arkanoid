@@ -1,7 +1,7 @@
 //plik nag³ówkowy state'a g³ównej rogrywki
 #pragma once
 #include <vector>
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "block.h"
 #include "ball.h"
 #include "gameState.h"
@@ -24,4 +24,8 @@ private:
 	std::vector<Block> borderVector;	//wektor zabieraj¹cy bloczki sk³adaj¹ce siê na otoczkê
 	sf::Texture tilesTexture;	//tekstura bloczków planszy
 	sf::Texture paddleTexture;	//tekstura bloczka rakiety
+	void prepareBall();
+	void preparePaddle();
+	void loadMap(int level);
+	void closeGameWhenWindowClosed();
 };

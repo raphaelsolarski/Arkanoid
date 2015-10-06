@@ -1,18 +1,18 @@
-//plik nag³ówkowy menu, które wyœwietla siê po ukoñczeniu poziomu
+//plik nag³ówkowy menu pora¿ki
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
 #include "gameState.h"
 
-class LevelFinishedMenu : public GameState
+class DefeatMenu : public GameState
 {
 public:
-	LevelFinishedMenu(); //konstruktor
-	~LevelFinishedMenu();	//destruktor
+	DefeatMenu();		//konstruktor
 	void handleEvents();
 	void logic();
 	void render();
-	
+
 private:
 	sf::Font arkanoidFont;
 	sf::Text arkanoidText;	//nazwa gry
