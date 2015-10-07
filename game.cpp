@@ -1,4 +1,4 @@
-//plik implementacyjny state'a g³ównej rozgrywki
+//implementation of main game
 #include "game.h"
 #include <fstream>
 #include <string>
@@ -11,10 +11,110 @@ Game::Game(int level)
 	prepareBall();
 	preparePaddle();
 	
-	//wyzerowanie licznika bloczków do zniszczenia
-	blocksToWin = 0;
+	blocksToDestroyCounter = 0;
 	
-	loadMap(level);
+	prepareMap(level);
+}
+
+void Game::prepareBall()
+{
+	ball = new Ball(BALL_SIZE);
+	ball->setPosition(START_BALL_POSITION);
+}
+
+void Game::preparePaddle()
+{
+	// load paddle's texture
+	if (!paddleTexture.loadFromFile("Graphics/paddle.png"))
+		std::cout << "paddle.png loading failed" << std::endl;
+	
+	// create paddle
+	paddle = new Block(PADDLE_SIZE);
+	paddle->setTexture(paddleTexture);
+	paddle->setPosition(START_PADDLE_POSITION);
+}
+
+void Game::prepareMap(int level)
+{
+	//load block tiles
+	if (!blocksTexture.loadFromFile("Graphics/tiles32.png"))
+	{
+		std::cout << "tiles32.png loading failed" << std::endl;
+	}
+	
+	loadMapFromFile(level);
+}
+
+void Game::loadMapFromFile(int level)
+{
+	std::string nameOfFileToLoad = "Maps/level" + std::to_string(level) + ".dat";
+	std::ifstream mapFileOfLevel(nameOfFileToLoad);
+	
+	if (!mapFileOfLevel.is_open())
+	{
+		std::cout << "There isn't suitable map file" << std::endl;
+		system("pause");
+		exit(-1);
+	}
+	
+	std::vector<std::vector<sf::Vector2i> > map;
+	std::vector<sf::Vector2i> newRowOfMap;
+	
+	std::string currentTurple;
+	
+	//Load values form .dat file into dynamic arrays
+	if (mapFileOfLevel.is_open())
+	{
+		while (!mapFileOfLevel.eof())
+		{
+			mapFileOfLevel >> currentTurple;
+			if (currentTurple[0] != 'x' && currentTurple[2] != 'x')
+				newRowOfMap.push_back(sf::Vector2i(currentTurple[0] - '0', currentTurple[2] - '0'));
+			else
+				newRowOfMap.push_back(sf::Vector2i(-1, -1));
+			
+			if (mapFileOfLevel.peek() == '\n')
+			{
+				map.push_back(newRowOfMap);
+				newRowOfMap.clear();
+			}
+		}
+		if (!newRowOfMap.empty())
+		{
+			map.push_back(newRowOfMap);
+			newRowOfMap.clear();
+		}
+	}
+	
+	
+	for (unsigned int row = 0; row < map.size(); row++)
+	{
+		for (unsigned int column = 0; column < map[row].size(); column++)
+		{
+			if (map[row][column].x != -1)
+			{
+				Block newBlock(sf::Vector2i(TILE_SIZE_X, TILE_SIZE_Y));
+				//check if the block belongs to border
+				if (row == 0 || column == 0 || column == (SCREEN_WIDTH / TILE_SIZE_X - 1))
+				{
+					newBlock.setPosition(sf::Vector2f(static_cast<float>(column * TILE_SIZE_X), static_cast<float>(row * TILE_SIZE_Y)));
+					newBlock.setTexture(blocksTexture);
+					newBlock.setTextureRect(sf::IntRect(map[row][column].x * TILE_SIZE_X, map[row][column].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
+					blocksOfBorder.push_back(newBlock);
+				}
+				else
+				{	
+					// the block is breakable
+					blocksToDestroyCounter++;
+					newBlock.setBlockType(BLOCK_TYPE_BREAKABLE);
+					newBlock.setPosition(sf::Vector2f(static_cast<float>(column * TILE_SIZE_X), static_cast<float>(row * TILE_SIZE_Y)));
+					newBlock.setTexture(blocksTexture);
+					newBlock.setTextureRect(sf::IntRect(map[row][column].x * TILE_SIZE_X, map[row][column].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
+					blocksInsideBorder.push_back(newBlock);
+				}
+			}
+		}
+	}
 }
 
 Game::~Game()
@@ -39,172 +139,18 @@ void Game::handleEvents()
 
 void Game::logic()
 {
-	closeGameWhenWindowClosed();
+	closeEntireGameWhenWindowClosed();
 	closeGameWhenBallOutside();
+	closeGameWhenAllBlocksDestroyed();
 
-
-	//sprawdzam czy nie zniszczono wszystkich bloczków
-	if (blocksToWin <= 0)
-		setNextState(GAME_STATE_LEVEL_FINISHED_MENU);
-
-	//live input
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		if (paddle->getPosition().x > TILE_SIZE_X)
-			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		if (paddle->getPosition().x < window->getSize().x - PADDLE_SIZE.x- TILE_SIZE_X)
-			paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
+	handleCollisions();
 	
-	//obs³u¿enie kolizji
-	//kolizja z paletk¹
-	ball->bounce(*paddle);
-
-	//kolizje z bloczkami
-	for (std::vector<Block>::iterator it = blocksVector.begin(); it != blocksVector.end(); it++)
-	{
-		if (ball->bounce(*it))
-		{	
-			//je¶li trafiony bloczek jest zniszczalny to nale¿y go zniszczyæ
-			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
-			{
-				blocksVector.erase(it);
-				blocksToWin--;
-			}
-			break;
-		}
-	}
-
-	//przemieszczenie pi³ki
+	updatePaddlePosition();
 	ball->update();
 }
 
-void Game::render()
+void Game::closeEntireGameWhenWindowClosed()
 {
-	//rysuje ramkê
-	for (unsigned int i = 0; i < borderVector.size(); i++)
-	{
-		window->draw(borderVector[i]);
-	}
-
-	//rysuje blocki wewn¹trz ramki
-	for (unsigned int i = 0; i < blocksVector.size(); i++)
-	{
-		window->draw(blocksVector[i]);
-	}
-
-	//rysuje bi³kê
-	window->draw(*ball);
-
-	//rysuje paletkê
-	window->draw(*paddle);
-
-	window->display();
-	window->clear();
-}
-
-void Game::prepareBall()
-{
-	ball = new Ball(BALL_SIZE);
-	ball->setPosition(START_BALL_POSITION);
-}
-
-
-void Game::preparePaddle()
-{
-		//Wczytanie tekstury rakiety
-	if (!paddleTexture.loadFromFile("Graphics/paddle.png"))
-		std::cout << "paddle.png loading failed" << std::endl;
-	
-	//stworzenie bloczka paletki
-	paddle = new Block(PADDLE_SIZE);
-	paddle->setTexture(paddleTexture);
-	paddle->setPosition(START_PADDLE_POSITION);
-}
-
-void Game::loadMap(int level)
-{
-	//WCZYTYWANIE MAPY
-	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))
-		std::cout << "tiles32.png loading failed" << std::endl;
-
-
-	//tworzê obiekt strumienia
-	std::string fileName = "Maps/level" + std::to_string(level) + ".dat";	//tworzê nazwê pliku to odtworzenia
-	std::ifstream mapFile(fileName);
-
-	if (!mapFile.is_open())
-	{
-		std::cout << "Brak odpowiedniego pliku mapy" << std::endl;
-		system("pause");
-		exit(-1);
-	}
-
-
-	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
-	//te tablice s¹ potrzebne tylko podczas budowania mapy
-	std::vector<std::vector<sf::Vector2i> > map;
-	std::vector<sf::Vector2i> tmpRow;
-
-	std::string tmpString;
-
-	//Proces mapowania pliku tekstowego do tablicy dynamicznej
-	if (mapFile.is_open())
-	{
-		while (!mapFile.eof())
-		{
-			mapFile >> tmpString;
-			if (tmpString[0] != 'x' && tmpString[2] != 'x')
-				tmpRow.push_back(sf::Vector2i(tmpString[0] - '0', tmpString[2] - '0'));
-			else
-				tmpRow.push_back(sf::Vector2i(-1, -1));
-
-			if (mapFile.peek() == '\n')
-			{
-				map.push_back(tmpRow);
-				tmpRow.clear();
-			}
-		}
-		if (!tmpRow.empty())
-		{
-			map.push_back(tmpRow);
-			tmpRow.clear();
-		}
-	}
-
-	//Tworzenie bloczków na podstawie map i wrzucanie ich do blocksVector'a
-	for (unsigned int i = 0; i < map.size(); i++)
-	{
-		for (unsigned int j = 0; j < map[i].size(); j++)
-		{
-			if (map[i][j].x != -1)
-			{
-				Block newBlock(sf::Vector2i(TILE_SIZE_X, TILE_SIZE_Y));
-				//sprawdzam czy nowy bloczek nie zalicza siê do otoczki planszy
-				if (i == 0 || j == 0 || j == (SCREEN_WIDTH / TILE_SIZE_X - 1))
-				{
-					newBlock.setPosition(sf::Vector2f(static_cast<float>(j * TILE_SIZE_X), static_cast<float>(i * TILE_SIZE_Y)));
-					newBlock.setTexture(tilesTexture);
-					newBlock.setTextureRect(sf::IntRect(map[i][j].x * TILE_SIZE_X, map[i][j].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
-					borderVector.push_back(newBlock);
-				}
-				else
-				{	//mamy do czynienia ze zniszczalnym bloczkiem 
-					blocksToWin++;
-					newBlock.setBlockType(BLOCK_TYPE_BREAKABLE);
-					newBlock.setPosition(sf::Vector2f(static_cast<float>(j * TILE_SIZE_X), static_cast<float>(i * TILE_SIZE_Y)));
-					newBlock.setTexture(tilesTexture);
-					newBlock.setTextureRect(sf::IntRect(map[i][j].x * TILE_SIZE_X, map[i][j].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
-					blocksVector.push_back(newBlock);
-				}
-			}
-		}
-	}
-}
-
-void Game::closeGameWhenWindowClosed()
-{
-		//sprawdzenie czy okno nie zosta³o zamkniête
 	if (!window->isOpen())
 	{
 		setNextState(GAME_STATE_EXIT);
@@ -213,7 +159,75 @@ void Game::closeGameWhenWindowClosed()
 
 void Game::closeGameWhenBallOutside()
 {
-	//sprawdzenie czy pi³ka nie wypad³a z planszy
-	if (ball->getPosition().y >= 480 - TILE_SIZE_Y)
+	if (ball->getPosition().y >= SCREEN_HEIGHT - ball->getBallSize().y)
 		setNextState(GAME_STATE_DEFEAT_MENU);
 }
+
+void Game::closeGameWhenAllBlocksDestroyed()
+{
+	if (blocksToDestroyCounter <= 0)
+		setNextState(GAME_STATE_LEVEL_FINISHED_MENU);
+}
+
+void Game::handleCollisions()
+{
+	//collisions with paddle
+	ball->bounce(*paddle);
+
+	//collisions with blocks
+	for (std::vector<Block>::iterator it = blocksInsideBorder.begin(); it != blocksInsideBorder.end(); it++)
+	{
+		if (ball->bounce(*it))
+		{	
+			//if the block collided with ball, the block will be destroyed
+			if (it->getBlockType() == BLOCK_TYPE_BREAKABLE)
+			{
+				blocksInsideBorder.erase(it);
+				blocksToDestroyCounter--;
+			}
+			break;
+		}
+	}
+}
+
+void Game::updatePaddlePosition()
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		if (paddle->getPosition().x > TILE_SIZE_X)
+			paddle->move(sf::Vector2f(-PADDLE_SPEED, 0));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			if (paddle->getPosition().x < window->getSize().x - PADDLE_SIZE.x- TILE_SIZE_X)
+				paddle->move(sf::Vector2f(PADDLE_SPEED, 0));
+}
+
+void Game::render()
+{
+	drawBorder();
+	drawBlocksInsideBorder();
+	window->draw(*ball);
+	window->draw(*paddle);
+
+	window->display();
+	window->clear();
+}
+
+void Game::drawBorder()
+{
+	for (unsigned int i = 0; i < blocksOfBorder.size(); i++)
+	{
+		window->draw(blocksOfBorder[i]);
+	}
+}
+
+void Game::drawBlocksInsideBorder()
+{
+	for (unsigned int i = 0; i < blocksInsideBorder.size(); i++)
+	{
+		window->draw(blocksInsideBorder[i]);
+	}
+}
+
+
+
+

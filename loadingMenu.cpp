@@ -5,11 +5,11 @@
 
 LoadingMenu::LoadingMenu()
 {
-	//domyœlna obecnie wybrana opcja
+	//domyï¿½lna obecnie wybrana opcja
 	actualOption = 0;
 
 	//wczytuje tekstury
-	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki t³a
+	if (!tilesTexture.loadFromFile("Graphics/tiles32.png"))		//bloczki tï¿½a
 		std::cout << "tiles32.png loading failed" << std::endl;
 
 	if (!buttonsTexture.loadFromFile("Graphics/loadingMenuButtons.png"))	//przyciski
@@ -18,16 +18,16 @@ LoadingMenu::LoadingMenu()
 	if (!viewFinderTexture.loadFromFile("Graphics/viewFinder.png"))	//teksturea celownika
 		std::cout << "viewFinder.png loading failed" << std::endl;
 
-	//przygotowujê sprite'a "BACK"
+	//przygotowujï¿½ sprite'a "BACK"
 	sf::Sprite backButton;
 	backButton.setTexture(buttonsTexture);
 	backButton.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(96, 32)));
 	backButton.setPosition(sf::Vector2f(272, 32));
 	interactiveElements.push_back(backButton);
 
-	//przygotowanie sprite'ów leveli(przycisków)
+	//przygotowanie sprite'ï¿½w leveli(przyciskï¿½w)
 	unsigned int collumn = 0;
-	for (unsigned int i = 1; i <= levelsInMenu; i++)
+	for (unsigned int i = 1; i <= LEVELS_TO_CHO0SE_IN_LOADING_MENU; i++)
 	{
 		if (i % 9 == 0)
 			collumn++;
@@ -39,8 +39,8 @@ LoadingMenu::LoadingMenu()
 		interactiveElements.push_back(newLevelBlock);
 	}
 
-	//tablica dynamiczna zawieraj¹ca odwzorowanie pliku .dat
-	//te tablice s¹ potrzebne tylko podczas budowania mapy
+	//tablica dynamiczna zawierajï¿½ca odwzorowanie pliku .dat
+	//te tablice sï¿½ potrzebne tylko podczas budowania mapy
 	std::vector<std::vector<sf::Vector2i> > map;
 	std::vector<sf::Vector2i> tmpRow;
 	std::string tmpString;
@@ -70,7 +70,7 @@ LoadingMenu::LoadingMenu()
 		}
 	}
 
-	//Tworzenie bloczków na podstawie map i wrzucanie ich do backgroundElements(vektora)
+	//Tworzenie bloczkï¿½w na podstawie map i wrzucanie ich do backgroundElements(vektora)
 	for (unsigned int i = 0; i < map.size(); i++)
 	{
 		for (unsigned int j = 0; j < map[i].size(); j++)
@@ -86,7 +86,7 @@ LoadingMenu::LoadingMenu()
 		}
 	}
 
-	//przygotowujê celownik
+	//przygotowujï¿½ celownik
 	viewFinder.setTexture(viewFinderTexture);
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
 }
@@ -112,12 +112,12 @@ void LoadingMenu::handleEvents()
 					setNextState(GAME_STATE_GAME);
 				}
 			}
-			else if (event.key.code == sf::Keyboard::Down)	//naciœniêto klawisz w dó³
+			else if (event.key.code == sf::Keyboard::Down)	//naciï¿½niï¿½to klawisz w dï¿½ï¿½
 			{
-				if (actualOption < levelsInMenu)
+				if (actualOption < LEVELS_TO_CHO0SE_IN_LOADING_MENU)
 					actualOption++;
 			}
-			else if (event.key.code == sf::Keyboard::Up)	//naciœniêto klawisz do góry
+			else if (event.key.code == sf::Keyboard::Up)	//naciï¿½niï¿½to klawisz do gï¿½ry
 			{
 				if (actualOption > 0)
 					actualOption--;
@@ -128,11 +128,11 @@ void LoadingMenu::handleEvents()
 
 void LoadingMenu::logic()
 {
-	//sprawdzam czy onko wci¹¿ jest otwarte
+	//sprawdzam czy onko wciï¿½ï¿½ jest otwarte
 	if (!window->isOpen())
 		setNextState(GAME_STATE_EXIT);
 
-	//uaktualniam pozycjê celownika
+	//uaktualniam pozycjï¿½ celownika
 	viewFinder.setPosition(sf::Vector2f(interactiveElements[actualOption].getPosition().x - 5, interactiveElements[actualOption].getPosition().y - 5));
 }
 

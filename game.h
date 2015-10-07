@@ -1,4 +1,4 @@
-//plik nag³ówkowy state'a g³ównej rogrywki
+//header file of main game module
 #pragma once
 #include <vector>
 #include <SFML/Graphics.hpp>
@@ -9,24 +9,35 @@
 class Game : public GameState
 {
 public:
-	Game(int level); //konstruktor - tutaj znajduje siê modu³ wczytuj¹cy mapê dla wskazanego levela
-	~Game();	//destruktor
-	//metody wirtualne dziedziczone od GameState
-	//czyli MainLoop
+	Game(int level);
+	~Game();
 	void handleEvents();
 	void logic();
 	void render();
+	
 private:
-	unsigned int blocksToWin;	//licznik ile zosta³o bloków do zniszczenia
-	Ball * ball;		//Pi³eczka
-	Block * paddle;		//Paletka
-	std::vector<Block> blocksVector;	//wektor zawieraj¹cy blocki znajduj¹ce siê wewn¹trz otoczki
-	std::vector<Block> borderVector;	//wektor zabieraj¹cy bloczki sk³adaj¹ce siê na otoczkê
-	sf::Texture tilesTexture;	//tekstura bloczków planszy
-	sf::Texture paddleTexture;	//tekstura bloczka rakiety
+	unsigned int blocksToDestroyCounter;
+	Ball * ball;
+	Block * paddle;
+	std::vector<Block> blocksInsideBorder;
+	std::vector<Block> blocksOfBorder;
+	sf::Texture blocksTexture;
+	sf::Texture paddleTexture;
+	
+	//costructor's methods
 	void prepareBall();
 	void preparePaddle();
-	void loadMap(int level);
-	void closeGameWhenWindowClosed();
+	void prepareMap(int level);
+	void loadMapFromFile(int level);
+	
+	//logic's methods
+	void closeEntireGameWhenWindowClosed();
 	void closeGameWhenBallOutside();
+	void closeGameWhenAllBlocksDestroyed();
+	void updatePaddlePosition();
+	void handleCollisions();
+	
+	//render's methods
+	void drawBorder();
+	void drawBlocksInsideBorder();
 };

@@ -1,4 +1,4 @@
-//plik zawieraj¹cy wszystkie sta³e w grze(taki troche config)
+//this file contains all constants used in the game
 #pragma once
 #include <SFML/Graphics.hpp>
 
@@ -17,9 +17,9 @@ const float BALL_SPEED = 5.0f;
 const sf::Vector2f START_BALL_DIRECTION = sf::Vector2f(1, 1);
 
 //paddle
-const sf::Vector2f START_PADDLE_POSITION = sf::Vector2f(256, 448);	//pozycja pocz¹tkowa paletki
-const float PADDLE_SPEED = 5.0f;	//prêdkoœæ poruszania siê paletki
-const sf::Vector2i PADDLE_SIZE = sf::Vector2i(128, 32);	//wymiary paletki
+const sf::Vector2f START_PADDLE_POSITION = sf::Vector2f(256, 448);
+const float PADDLE_SPEED = 5.0f;
+const sf::Vector2i PADDLE_SIZE = sf::Vector2i(128, 32);
 
 //loading menu 
-const unsigned int levelsInMenu = 5;	//liczba poziomów do wybrania w menu
+const unsigned int LEVELS_TO_CHO0SE_IN_LOADING_MENU = 5;
