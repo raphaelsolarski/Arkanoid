@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-c -Wall -Wextra -Wpedantic -std=c++11
 LFLAGS=-Wall -Wextra -Wpedantic
 LLIB=-lsfml-window -lsfml-graphics -lsfml-system
-ALLOBJ=aboutMenu.o ball.o block.o defeatMenu.o game.o gameState.o levelFinishedMenu.o loadingMenu.o main.o mainMenu.o pauseMenu.o
+ALLOBJ=aboutMenu.o ball.o block.o defeatMenu.o game.o gameState.o levelFinishedMenu.o loadingMenu.o main.o mainMenu.o pauseMenu.o rule.o mapLoader.o
 
 ALL: $(ALLOBJ)
 	$(CC) $(LFLAGS) -o Arkanoid $(ALLOBJ) $(LLIB)
@@ -39,3 +39,9 @@ mainMenu.o: mainMenu.cpp
 
 pauseMenu.o: pauseMenu.cpp
 	$(CC) $(CFLAGS) -o pauseMenu.o pauseMenu.cpp
+
+rule.o: rule.cpp
+	$(CC) $(CFLAGS) -o rule.o rule.cpp
+
+mapLoader.o: mapLoader.cpp
+	$(CC) $(CFLAGS) -o mapLoader.o mapLoader.cpp

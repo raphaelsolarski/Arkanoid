@@ -16,7 +16,7 @@ public:
 	void render();
 	
 private:
-	unsigned int blocksToDestroyCounter;
+	static unsigned int blocksToDestroyCounter;
 	Ball * ball;
 	Block * paddle;
 	std::vector<Block> blocksInsideBorder;
@@ -28,7 +28,9 @@ private:
 	void prepareBall();
 	void preparePaddle();
 	void prepareMap(int level);
-	void loadMapFromFile(int level);
+	void loadMapFromFileWithRules(int level);
+	static bool ruleOfBorderBlocks(sf::Vector2u positionOnMap);
+	static bool ruleOfBlocksInsideBorder(sf::Vector2u positionOnMap);
 	
 	//logic's methods
 	void closeEntireGameWhenWindowClosed();

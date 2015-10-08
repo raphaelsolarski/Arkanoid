@@ -1,18 +1,19 @@
 //implementation of main game
-#include "game.h"
 #include <fstream>
 #include <string>
 #include <iostream>
 #include <stdlib.h>
 #include "constants.h"
+#include "game.h"
+#include "mapLoader.h"
+
+unsigned int Game::blocksToDestroyCounter = 0;
 
 Game::Game(int level)
 {
 	prepareBall();
 	preparePaddle();
-	
-	blocksToDestroyCounter = 0;
-	
+		
 	prepareMap(level);
 }
 
@@ -41,81 +42,38 @@ void Game::prepareMap(int level)
 	{
 		std::cout << "tiles32.png loading failed" << std::endl;
 	}
-	
-	loadMapFromFile(level);
+	loadMapFromFileWithRules(level);
 }
 
-void Game::loadMapFromFile(int level)
+void Game::loadMapFromFileWithRules(int level)
 {
 	std::string nameOfFileToLoad = "Maps/level" + std::to_string(level) + ".dat";
-	std::ifstream mapFileOfLevel(nameOfFileToLoad);
 	
-	if (!mapFileOfLevel.is_open())
-	{
-		std::cout << "There isn't suitable map file" << std::endl;
-		system("pause");
-		exit(-1);
-	}
-	
-	std::vector<std::vector<sf::Vector2i> > map;
-	std::vector<sf::Vector2i> newRowOfMap;
-	
-	std::string currentTurple;
-	
-	//Load values form .dat file into dynamic arrays
-	if (mapFileOfLevel.is_open())
-	{
-		while (!mapFileOfLevel.eof())
-		{
-			mapFileOfLevel >> currentTurple;
-			if (currentTurple[0] != 'x' && currentTurple[2] != 'x')
-				newRowOfMap.push_back(sf::Vector2i(currentTurple[0] - '0', currentTurple[2] - '0'));
-			else
-				newRowOfMap.push_back(sf::Vector2i(-1, -1));
-			
-			if (mapFileOfLevel.peek() == '\n')
-			{
-				map.push_back(newRowOfMap);
-				newRowOfMap.clear();
-			}
-		}
-		if (!newRowOfMap.empty())
-		{
-			map.push_back(newRowOfMap);
-			newRowOfMap.clear();
-		}
-	}
-	
-	
-	for (unsigned int row = 0; row < map.size(); row++)
-	{
-		for (unsigned int column = 0; column < map[row].size(); column++)
-		{
-			if (map[row][column].x != -1)
-			{
-				Block newBlock(sf::Vector2i(TILE_SIZE_X, TILE_SIZE_Y));
-				//check if the block belongs to border
-				if (row == 0 || column == 0 || column == (SCREEN_WIDTH / TILE_SIZE_X - 1))
-				{
-					newBlock.setPosition(sf::Vector2f(static_cast<float>(column * TILE_SIZE_X), static_cast<float>(row * TILE_SIZE_Y)));
-					newBlock.setTexture(blocksTexture);
-					newBlock.setTextureRect(sf::IntRect(map[row][column].x * TILE_SIZE_X, map[row][column].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
-					blocksOfBorder.push_back(newBlock);
-				}
-				else
-				{	
-					// the block is breakable
-					blocksToDestroyCounter++;
-					newBlock.setBlockType(BLOCK_TYPE_BREAKABLE);
-					newBlock.setPosition(sf::Vector2f(static_cast<float>(column * TILE_SIZE_X), static_cast<float>(row * TILE_SIZE_Y)));
-					newBlock.setTexture(blocksTexture);
-					newBlock.setTextureRect(sf::IntRect(map[row][column].x * TILE_SIZE_X, map[row][column].y * TILE_SIZE_Y, TILE_SIZE_X, TILE_SIZE_Y));
-					blocksInsideBorder.push_back(newBlock);
-				}
-			}
-		}
-	}
+	MapLoader mapLoader(nameOfFileToLoad, &blocksTexture);
+	mapLoader.addRule(ruleOfBorderBlocks, &blocksOfBorder, BLOCK_TYPE_UNBREAKABLE);
+	mapLoader.addRule(ruleOfBlocksInsideBorder, &blocksInsideBorder, BLOCK_TYPE_BREAKABLE);
+	mapLoader.loadMap();
 }
+
+bool Game::ruleOfBorderBlocks(sf::Vector2u positionOnMap)
+{
+	if(positionOnMap.x == 0 || positionOnMap.x == 19 || positionOnMap.y == 0)
+		return true;
+	else
+		return false;
+}
+
+bool Game::ruleOfBlocksInsideBorder(sf::Vector2u positionOnMap)
+{
+	if(positionOnMap.x != 0 && positionOnMap.x != 19 && positionOnMap.y != 0)
+	{
+		blocksToDestroyCounter++;
+		return true;
+	}
+	else
+		return false;
+}
+
 
 Game::~Game()
 {
@@ -227,7 +185,3 @@ void Game::drawBlocksInsideBorder()
 		window->draw(blocksInsideBorder[i]);
 	}
 }
-
-
-
-
