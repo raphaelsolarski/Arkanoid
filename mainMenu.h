@@ -1,4 +1,3 @@
-//plik nag³ówkowy menu g³ównego 
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -6,7 +5,6 @@
 #include "gameState.h"
 #include "block.h"
 
-//typ okreœlaj¹cy opcje w menu
 enum MenuOption
 {
 	MENU_OPTION_NEW_GAME,
@@ -18,19 +16,35 @@ enum MenuOption
 class MainMenu : public GameState
 {
 public:
-	MainMenu();		//konstruktor
-	//metody do MainLoop
+	MainMenu();
 	void handleEvents();
 	void logic();
 	void render();
+	
 private:
-	sf::Font arkanoidFont;
-	sf::Text arkanoidText;	//nazwa gry
-	sf::Texture tilesTexture;	//tekstura bloczków z których dla klimatu bêdzie tak¿e zbudowane menu
-	sf::Texture buttonsTexture;	//set tekstur do przycisków
-	sf::Texture viewFinderTexture;	//tekstura do celownika
-	std::vector<Block> backgroundElementsVector;	//wektor zawieraj¹cy wszystkie elementy stanowi¹ce background
-	std::vector<Block> interactiveElementsVector;	//wektor zawieraj¹cy interaktywne elementy menu(w odpowiedniej kolejnoœci)
-	sf::Sprite viewFinderSprite;	//sprite celownika wyboru
-	MenuOption actualOption;	//pole okreœlaj¹ce aktualnie najechan¹ opcjê w menu
+	sf::Font gameLogoFont;
+	sf::Text gameLogoText;	//Text to display as a game logo
+	sf::Texture blocksTexture;
+	sf::Texture buttonsTexture;//set of textures for buttons
+	sf::Texture viewFinderTexture;
+	std::vector<Block> blocksInBackground;
+	std::vector<Block> buttonsInMenu;
+	sf::Sprite viewFinder;	//viewFinder to point out buttons in menu
+	MenuOption currentOption;
+	
+	//constructor's methods
+	void loadNeededTextures();
+	void loadNeededFonts();
+	void prepareViewFinder();
+	void prepareButtons();
+	void prepareBackground();
+	void prepareLogo();
+	
+	//logic's methods
+	void closeGameWhenWindowClosed();
+	void updateViewFinderPosition();
+	
+	//render's methods
+	void drawBackground();
+	void drawButtons();
 };

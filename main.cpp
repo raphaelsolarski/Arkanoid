@@ -6,15 +6,11 @@
 #include "mainMenu.h"
 #include "constants.h"
 
-//docelowa liczba klatek na sekundê
-const int FRAMES_PER_SECOND = 60;
-
 int main()
 { 
-	//stworzenie okna sfml
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32), "Arkanoid");
 
-	//inicjalizacja state machine
+	//State machine init
 	GameState::init(new MainMenu, &window);
 
 	//Main Loop
@@ -32,7 +28,7 @@ int main()
 		//RENDER
 		GameState::getCurrentState().render();
 		
-		//Stabilizacja fps'ów
+		//Fps stabilisation
 		if (clock.getElapsedTime().asMilliseconds() < 1000 / FRAMES_PER_SECOND) 
 		{ 
 			sf::sleep(sf::milliseconds((1000 / FRAMES_PER_SECOND) - clock.getElapsedTime().asMilliseconds())); 

@@ -12,6 +12,7 @@ public:
 	~MapLoader();
 	void addRule(bool(*rule)(sf::Vector2u positionOnMap, sf::Vector2i positionInTiles), std::vector<Block>* container, BlockType blockType);
 	void addRule(bool(*rule)(sf::Vector2u positionOnMap), std::vector<Block>* container, BlockType blockType);
+	void addRule(std::vector<Block>* container, BlockType blockType);
 	void loadMap();
 	
 private:

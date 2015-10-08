@@ -35,6 +35,10 @@ void MapLoader::addRule(bool(*rule)(sf::Vector2u), std::vector< Block >* contain
 	rules.push_back(Rule(rule, container, blockType));
 }
 
+void MapLoader::addRule(std::vector< Block >* container, BlockType blockType)
+{
+	rules.push_back(Rule(container, blockType));
+}
 
 void MapLoader::loadMap()
 {

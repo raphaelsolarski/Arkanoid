@@ -2,11 +2,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+//main loop
+const int FRAMES_PER_SECOND = 60;
+
 //window
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-//wymiary bloczków
+//blocks on map size
 const int TILE_SIZE_X = 32;
 const int TILE_SIZE_Y = 32;
 
